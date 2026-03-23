@@ -1,0 +1,202 @@
+generator client {
+	provider = "prisma-client-js"
+}
+
+datasource db {
+	provider = "sqlite"
+	url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+	PENDING
+	APPROVED
+	REJECTED
+}
+
+enum PurchaseOrderStatus {
+	DRAFT
+	RECEIVED
+}
+
+enum DeliveryScheduleStatus {
+	OPEN
+	CLOSED
+}
+
+enum OrderChannel {
+	ONLINE
+	WHATSAPP
+}
+
+enum NotificationChannel {
+	SMS
+	WHATSAPP
+}
+
+model Supplier {
+	id         String   @id @default(cuid())
+	name       String
+	contact    String?
+	phone      String?
+	email      String?
+	createdAt  DateTime @default(now())
+	updatedAt  DateTime @updatedAt
+	purchaseOrders PurchaseOrder[]
+}
+
+model Center {
+	id         String   @id @default(cuid())
+	name       String   @unique
+	address    String?
+	createdAt  DateTime @default(now())
+	updatedAt  DateTime @updatedAt
+	inventories Inventory[]
+	purchaseOrders PurchaseOrder[]
+	stockTransfersFrom StockTransfer[] @relation("StockFrom")
+	stockTransfersTo   StockTransfer[] @relation("StockTo")
+}
+
+model Product {
+	id          String   @id @default(cuid())
+	itemCode    String   @unique
+	name        String
+	price       Decimal
+	description String?
+	imageUrl    String?
+	category    String?
+	createdAt   DateTime @default(now())
+	updatedAt   DateTime @updatedAt
+	inventory   Inventory[]
+	purchaseItems PurchaseOrderItem[]
+	grnItems      GoodsReceivedItem[]
+	stockTransfers StockTransfer[]
+	orderItems     OrderItem[]
+}
+
+model Category {
+	id        String   @id @default(cuid())
+	name      String   @unique
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+}
+
+model Inventory {
+	id        String   @id @default(cuid())
+	centerId  String
+	productId String
+	quantity  Int      @default(0)
+	updatedAt DateTime @updatedAt
+	center    Center   @relation(fields: [centerId], references: [id])
+	product   Product  @relation(fields: [productId], references: [id])
+
+	@@unique([centerId, productId])
+}
+
+model PurchaseOrder {
+	id         String   @id @default(cuid())
+	poNumber   String   @unique
+	supplierId String
+	centerId   String
+	status     PurchaseOrderStatus @default(DRAFT)
+	createdAt  DateTime @default(now())
+	updatedAt  DateTime @updatedAt
+	supplier   Supplier @relation(fields: [supplierId], references: [id])
+	center     Center   @relation(fields: [centerId], references: [id])
+	items      PurchaseOrderItem[]
+	grn        GoodsReceivedNote?
+}
+
+model PurchaseOrderItem {
+	id              String   @id @default(cuid())
+	purchaseOrderId String
+	productId       String
+	quantity        Int
+	price           Decimal
+	purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+	product         Product       @relation(fields: [productId], references: [id])
+}
+
+model GoodsReceivedNote {
+	id              String   @id @default(cuid())
+	grnNumber       String   @unique
+	purchaseOrderId String   @unique
+	createdAt       DateTime @default(now())
+	purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+	items           GoodsReceivedItem[]
+}
+
+model GoodsReceivedItem {
+	id        String   @id @default(cuid())
+	grnId     String
+	productId String
+	quantity  Int
+	grn       GoodsReceivedNote @relation(fields: [grnId], references: [id])
+	product   Product          @relation(fields: [productId], references: [id])
+}
+
+model StockTransfer {
+	id            String   @id @default(cuid())
+	transferNo    String   @unique
+	fromCenterId  String
+	toCenterId    String
+	productId     String
+	quantity      Int
+	createdAt     DateTime @default(now())
+	fromCenter    Center   @relation("StockFrom", fields: [fromCenterId], references: [id])
+	toCenter      Center   @relation("StockTo", fields: [toCenterId], references: [id])
+	product       Product  @relation(fields: [productId], references: [id])
+}
+
+model Customer {
+	id        String   @id @default(cuid())
+	name      String
+	phone     String   @unique
+	address   String?
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	orders    Order[]
+}
+
+model DeliverySchedule {
+	id          String   @id @default(cuid())
+	windowStart DateTime
+	windowEnd   DateTime
+	status      DeliveryScheduleStatus @default(OPEN)
+	createdAt   DateTime @default(now())
+	orders      Order[]
+}
+
+model Order {
+	id                 String   @id @default(cuid())
+	orderNo            String   @unique
+	customerId         String
+	deliveryScheduleId String?
+	status             OrderStatus    @default(PENDING)
+	channel            OrderChannel   @default(ONLINE)
+	notes              String?
+	createdAt          DateTime @default(now())
+	updatedAt          DateTime @updatedAt
+	customer           Customer @relation(fields: [customerId], references: [id])
+	deliverySchedule   DeliverySchedule? @relation(fields: [deliveryScheduleId], references: [id])
+	items              OrderItem[]
+	notifications      NotificationLog[]
+}
+
+model OrderItem {
+	id        String   @id @default(cuid())
+	orderId   String
+	productId String
+	quantity  Int
+	price     Decimal
+	order     Order    @relation(fields: [orderId], references: [id])
+	product   Product  @relation(fields: [productId], references: [id])
+}
+
+model NotificationLog {
+	id        String   @id @default(cuid())
+	orderId   String
+	channel   NotificationChannel
+	message   String
+	createdAt DateTime @default(now())
+	order     Order    @relation(fields: [orderId], references: [id])
+}
