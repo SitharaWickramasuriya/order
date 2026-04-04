@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CartItem, getCart, setCart } from "@/lib/cart";
+import { formatCurrency } from "@/lib/currency";
 
 export default function CartPage() {
 	const [items, setItems] = useState<CartItem[]>(() => getCart());
@@ -42,7 +43,7 @@ export default function CartPage() {
 							{items.map((item) => (
 								<tr key={item.productId}>
 									<td>{item.name}</td>
-									<td>${item.price.toFixed(2)}</td>
+									<td>{formatCurrency(item.price)}</td>
 									<td>
 										<input
 											type="number"
@@ -52,7 +53,7 @@ export default function CartPage() {
 											className="w-16 rounded border border-slate-200 p-1"
 										/>
 									</td>
-									<td>${(item.price * item.quantity).toFixed(2)}</td>
+									<td>{formatCurrency(item.price * item.quantity)}</td>
 									<td>
 										<button className="text-red-600" onClick={() => removeItem(item.productId)} type="button">
 											Remove
@@ -64,7 +65,7 @@ export default function CartPage() {
 					</table>
 					<div className="mt-4 flex items-center justify-between">
 						<span className="text-lg font-semibold">Subtotal</span>
-						<span className="text-2xl font-bold text-emerald-700">${total.toFixed(2)}</span>
+						<span className="text-2xl font-bold text-emerald-700">{formatCurrency(total)}</span>
 					</div>
 				</div>
 			)}

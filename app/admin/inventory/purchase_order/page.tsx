@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/currency";
 
 type Supplier = { id: string; name: string };
 type Center = { id: string; name: string };
@@ -206,7 +207,7 @@ export default function PurchaseOrdersPage() {
 										<ul className="list-disc pl-4 text-sm text-muted">
 											{po.items.map((i) => (
 												<li key={i.id}>
-													{i.product.name} x {i.quantity} @ ${i.price.toFixed(2)}
+													{i.product.name} x {i.quantity} @ {formatCurrency(i.price)}
 												</li>
 											))}
 										</ul>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/currency";
 
 type OrderItem = { id: string; product: { name: string }; quantity: number; price: number };
 type Order = {
@@ -83,7 +84,7 @@ export default function AdminOrders() {
 									<ul className="list-disc pl-4 text-sm text-muted">
 										{o.items.map((i) => (
 											<li key={i.id}>
-												{i.product?.name ?? "Item"} x {i.quantity} @ ${i.price.toFixed(2)}
+												{i.product?.name ?? "Item"} x {i.quantity} @ {formatCurrency(i.price)}
 											</li>
 										))}
 									</ul>

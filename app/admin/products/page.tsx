@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/currency";
 
 type Product = {
 	id: string;
@@ -182,7 +183,7 @@ export default function AdminProducts() {
 										<td>{p.itemCode}</td>
 										<td>{p.name}</td>
 										<td>{p.category ?? "-"}</td>
-										<td>${p.price.toFixed(2)}</td>
+										<td>{formatCurrency(p.price)}</td>
 									</tr>
 								))}
 							</tbody>

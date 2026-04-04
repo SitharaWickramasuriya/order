@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { addToCart } from "@/lib/cart";
+import { formatCurrency } from "@/lib/currency";
 
 type Product = {
 	id: string;
@@ -59,7 +60,7 @@ export default function ProductsPage() {
 						<p className="text-sm text-muted">{product.category ?? "Grocery"}</p>
 						<p className="mt-3 line-clamp-3 text-sm text-muted">{product.description ?? ""}</p>
 						<div className="mt-4 flex items-center justify-between">
-							<span className="text-2xl font-bold text-emerald-700">${product.price.toFixed(2)}</span>
+							<span className="text-2xl font-bold text-emerald-700">{formatCurrency(product.price)}</span>
 							<button className="btn btn-primary" type="button" onClick={() => onAdd(product)}>
 								Add
 							</button>

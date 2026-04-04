@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { LogoutButton } from "@/components/admin/LogoutButton";
 
 const navLinks = [
 	{ href: "/admin/dashboard", label: "Dashboard" },
@@ -26,6 +27,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 							</Link>
 						))}
 					</nav>
+					<div className="mt-6 border-t border-white/20 pt-4">
+						<LogoutButton />
+					</div>
 				</aside>
 				<main className="flex-1 space-y-6">{children}</main>
 			</div>

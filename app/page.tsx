@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { addToCart } from "@/lib/cart";
+import { formatCurrency } from "@/lib/currency";
 
 type Product = {
   id: string;
@@ -110,11 +111,11 @@ export default function Home() {
       <main className="store-shell store-main">
         <section className="store-hero">
           <div className="store-hero-copy">
-            <span className="store-pill">Free Shipping - orders over $100</span>
+            <span className="store-pill">Free Shipping - orders over {formatCurrency(100)}</span>
             <h1>
               Free Shipping on
               <br />
-              orders over <strong>$100</strong>
+              orders over <strong>{formatCurrency(100)}</strong>
             </h1>
             <p>
               Free shipping to first-time customers only. After promotions and discounts are applied.
@@ -193,8 +194,8 @@ export default function Home() {
                     <div className="store-rating">★★★★★ <span>4.5</span></div>
                     <div className="store-product-buy">
                       <div>
-                        <strong>${product.price.toFixed(2)}</strong>
-                        <small>${(product.price * 1.18).toFixed(2)}</small>
+                        <strong>{formatCurrency(product.price)}</strong>
+                        <small>{formatCurrency(product.price * 1.18)}</small>
                       </div>
                       <button className="btn btn-primary" type="button" onClick={() => handleAdd(product)}>
                         + Add
@@ -226,8 +227,8 @@ export default function Home() {
                 <h3>{product.name}</h3>
                 <div className="store-product-buy">
                   <div>
-                    <strong>${product.price.toFixed(2)}</strong>
-                    <small>${(product.price * 1.1).toFixed(2)}</small>
+                    <strong>{formatCurrency(product.price)}</strong>
+                    <small>{formatCurrency(product.price * 1.1)}</small>
                   </div>
                   <button className="btn btn-primary" type="button" onClick={() => handleAdd(product)}>
                     + Add to Cart

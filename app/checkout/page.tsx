@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CartItem, getCart, setCart } from "@/lib/cart";
+import { formatCurrency } from "@/lib/currency";
 
 export default function CheckoutPage() {
 	const [items, setItems] = useState<CartItem[]>(() => getCart());
@@ -98,12 +99,12 @@ export default function CheckoutPage() {
 									<p className="font-semibold">{item.name}</p>
 									<p className="text-sm text-muted">Qty {item.quantity}</p>
 								</div>
-								<p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+								<p className="font-semibold">{formatCurrency(item.price * item.quantity)}</p>
 							</div>
 						))}
 						<div className="flex items-center justify-between border-t border-slate-200 pt-3 text-lg font-bold">
 							<span>Total</span>
-							<span className="text-emerald-700">${total.toFixed(2)}</span>
+							<span className="text-emerald-700">{formatCurrency(total)}</span>
 						</div>
 					</div>
 				)}
